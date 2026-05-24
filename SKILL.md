@@ -1,11 +1,11 @@
 ---
-name: web-search-brave
-description: Interroga l'indice globale e indipendente di Brave Search per trovare notizie e documentazione tecnica in tempo reale.
+name: web-search-tavily
+description: Real-time web search using Tavily. Use this skill whenever the user asks to search the web, find current news, recent events, or updated information.
 metadata:
   require-secret: true
-  require-secret-description: Inserisci la tua API Key privata di Brave Search.
+  require-secret-description: Inserisci la tua API Key privata di Tavily.
 ---
-# Brave Web Search Tool
+# Tavily Web Search Tool
 
 ## Instructions
 Call the run_js tool with the following exact parameters:
