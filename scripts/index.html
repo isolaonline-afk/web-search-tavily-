@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
-<head><meta charset="UTF-8"><title>Search</title></head>
+<head><meta charset="UTF-8"><title>Exa Search</title></head>
 <body>
 <script>
 window['ai_edge_gallery_get_result'] = async (data, secret) => {
@@ -9,15 +9,30 @@ window['ai_edge_gallery_get_result'] = async (data, secret) => {
         const query = params.query;
         if (!query || !secret) return JSON.stringify({ error: "Dati o Key mancanti." });
 
-        const response = await fetch('https://api.tavily.com/search', {
+        // Chiamata POST ufficiale all'endpoint di Exa
+        const response = await fetch('https://api.exa.ai/search', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ api_key: secret, query: query, search_depth: "basic", max_results: 3 })
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-api-key': secret
+            },
+            body: JSON.stringify({ 
+                query: query, 
+                type: "auto", 
+                numResults: 3,
+                contents: { highlights: true } 
+            })
         });
         
         if (!response.ok) return JSON.stringify({ error: `HTTP ${response.status}` });
         const searchData = await response.json();
-        const snippets = searchData.results.map(item => `Fonte: ${item.title}\nContenuto: ${item.content}`).join('\n\n');
+        
+        // Estrazione pulita dei soli passaggi salienti (Highlights)
+        const snippets = searchData.results.map(item => {
+            const highlightText = Array.isArray(item.highlights) ? item.highlights.join('\n') : (item.highlights || '');
+            return `Fonte: ${item.title}\nURL: ${item.url}\nContesto:\n${highlightText}`;
+        }).join('\n\n');
+        
         return JSON.stringify({ result: snippets });
     } catch (e) { return JSON.stringify({ error: e.message }); }
 };
